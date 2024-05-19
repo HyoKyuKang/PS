@@ -1,5 +1,4 @@
 
-
 class seg{
 	public:
 	vector<ll>tree;
@@ -7,7 +6,7 @@ class seg{
 	seg(int n){
 		for(base=1;base<=n;base*=2);
 		//0~n쓰겠다
-		tree.resize(n*4+4,-inf);
+		tree.resize(n*4+4);
 	}
 	ll f(ll l,ll r){
 		l+=base,r+=base;
