@@ -1,6 +1,6 @@
 //1bin 코드
-int lv[NMAX], sa, sb, A[NMAX], B[NMAX], w[NMAX];
-vector<int> adj[NMAX];
+int lv[n_], sa, sb, A[n_], B[n_], w[n_];
+vector<int> adj[n_];
 
 void bfs() {
 	queue<int> q;
