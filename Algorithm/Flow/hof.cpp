@@ -1,4 +1,6 @@
 //1bin 코드
+//sa -> size a sb ->size b 
+//15번째 줄 inf 조심
 int lv[n_], sa, sb, A[n_], B[n_], w[n_];
 vector<int> adj[n_];
 
