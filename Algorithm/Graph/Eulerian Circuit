@@ -1,0 +1,62 @@
+//BOJ1199 AC Code 
+//O(E)
+
+#include<bits/stdc++.h>
+#pragma GCC optimize("O3")
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
+#pragma GCC target("avx2")
+#define all(v) v.begin(),v.end()
+using namespace std;
+using ll = long long;
+using P = pair<ll, ll>;
+using PP = pair<ll, P>;
+const ll n_ =5e5+100, inf = (ll)2e9 * (ll)1e9 + 7, mod = 1e9+7;
+ll n, m, tc = 1, a, b, c, d, sum, x, y, z, base, ans, k;
+ll gcd(ll x,ll y){
+	if(!y)return x;
+	return gcd(y,x%y);
+}
+vector<P>v[n_];
+vector<ll>checked;
+void dfs(ll x){
+	while(1){
+		while(v[x].size() && checked[v[x].back().second])v[x].pop_back();
+		//쓴거 다 지우기
+		if(v[x].empty())break;
+		auto [a,b]=v[x].back();
+		v[x].pop_back();
+		checked[b]=true;
+		dfs(a);
+	}
+	cout<<x<<' ';
+}
+void solve(){
+	cin>>n;
+	for(int i=1;i<=n;i++)
+		for(int j=1;j<=n;j++){
+			cin>>a;
+			if(i<j)continue;
+			for(int k=0;k<a;k++){
+				v[i].push_back({j,base});
+				v[j].push_back({i,base});
+				base++;
+			}
+		}
+	checked.resize(base+1);
+	for(int i=1;i<=n;i++){
+		if(v[i].size()%2){
+			cout<<"-1";
+			return;
+		}
+	}
+	dfs(1);
+}
+
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0), cout.tie(0);
+	//cin >> tc;
+	while (tc--)solve();
+}
