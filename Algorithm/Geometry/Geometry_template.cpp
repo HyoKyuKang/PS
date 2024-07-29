@@ -152,3 +152,14 @@ int inside(pt p, vector<pt>& v){
     }
     return ccw(v[l - 1], p, v[l]) < 0;
 }
+
+
+//삼각형의 외접원의 중심을 return
+pd get_circle_center(pd a,pd b,pd c){
+	pd aa=b-a,bb=c-a;
+	auto c1 = aa*aa * 0.5, c2 = bb*bb * 0.5;
+    auto d = aa / bb;
+    auto x = a.x + (c1 * bb.y - c2 * aa.y) / d;
+    auto y = a.y + (c2 * aa.x - c1 * bb.x) / d;
+    return pd(x, y);
+}
