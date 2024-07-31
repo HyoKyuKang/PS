@@ -57,3 +57,31 @@ int main() {
 	//cin >> tc;
 	while (tc--)solve();
 }
+
+
+
+
+ll crt(vector<ll>&A, vector<ll>&B) {
+	//b로 나눴을 때, 나머지가 a
+	ll a1 = A[0], b1 = B[0];
+	for (int i = 1; i < A.size(); i++) {
+		ll x,  y, a2 = A[i], b2 = B[i], G = gcd(b1, b2);
+		if ((abs(a2 - a1)) % G)return -1;
+		ex_gcd(b1 / G, b2 / G ,x, y);
+		x *=(a2 - a1) / G;
+		x %= (b2 / G);
+		x = (x + b2 / G) % (b2 / G);
+		ll t = b1 * b2 / G;
+		a1 = b1 * x + a1;
+		a1 %= t;
+		b1 = t;
+	}
+	return a1;
+}
+void solve() {
+	n = 3;
+	vector<ll>A(n), B(n);
+	for (int i = 0; i < n; i++)cin >> B[i];
+	for (int i = 0; i < n; i++)cin >> A[i];
+	cout << crt(A, B) << '\n';
+}
