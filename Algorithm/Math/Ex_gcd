@@ -1,0 +1,59 @@
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<cmath>
+#include<queue>
+#include<string>
+#include<cstring>
+#include<stack>
+#include<map>
+#include<set>
+#include<deque>
+#include<functional>
+#include<unordered_map>
+#include<list>
+
+//#define double long double
+//s.erase(unique(s.begin(),s.end()),s.end())
+//written by djs100201
+#define all(v) v.begin(),v.end()
+using namespace std;
+using ll = long long;
+using P = pair<ll, ll>;
+using PP = pair<ll, P>;
+const ll n_ = 1e5 + 100, inf = 1e18, mod = 1e9 + 7, sqrtN = 333, p = 27;
+ll n, m, k, tc = 1, a, b, c, d, sum, x, y, z, base, ans;
+ll gcd(ll x, ll y) {
+	if (!y)return x;
+	return gcd(y, x%y);
+}
+//ax+by=1의 값을 x,y에 저장해준다. gcd(a,b)를 return 해준다.
+ll ex_gcd(ll a, ll b, ll &x, ll &y) {
+	if (!b) {
+		x = 1, y = 0;
+		return a;
+	}
+	ll ret = ex_gcd(b, a%b, x, y);
+	ll temp = y;
+	y = x - (a / b)*y;
+	x = temp;
+	if (x <= 0) {
+		x += b;
+		y -= a;
+	}
+	return ret;
+}
+void solve() {
+	cin >> a >> b;
+	cout << a - b << ' ';
+	if (gcd(a, b) != 1)x = -1;
+	else ex_gcd(b, a, x, y);
+	cout << x;
+
+}
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0), cout.tie(0);
+	//cin >> tc;
+	while (tc--)solve();
+}
