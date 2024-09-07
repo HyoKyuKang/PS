@@ -1,1 +1,7 @@
 { BasedOnStyle: Google, IndentWidth: 4, TabWidth: 4, ColumnLimit: 200 } 
+
+
+Ctrl + L : 한 줄 전체 선택
+Ctrl + G : 선택한 줄로 이동
+Ctrl + K + F : 선택한 부분 정렬
+Ctrl + enter : 다음줄 생성
