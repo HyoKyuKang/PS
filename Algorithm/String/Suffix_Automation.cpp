@@ -6,8 +6,10 @@ using P = pair<ll, ll>;
 using PP = pair<ll, P>;
 const ll n_ = 1e6 + 10, inf = (ll)2e9 * (ll)1e9 + 7, mod = 998244353;
 ll n, m, tc = 1, a, b, c, d, sum, x, y, z, base, ans, k;
-//based on koosaga
+
 const int MAXA = 26;
+//S.total ->최종 문자열 
+//sa 최대 사이즈 -> 2n-1, 최대간선 3n-4
 struct SuffixAutomaton {
     struct node {
         int nxt[MAXA], len, slink;
@@ -25,7 +27,7 @@ struct SuffixAutomaton {
     int total;
     SuffixAutomaton() {
         total = 0;
-        //sa.reserve(2000005);
+        // sa.reserve(2000005);
         sa.push_back(node(0, -1));
     }
     void addChar(int c) {
@@ -42,6 +44,8 @@ struct SuffixAutomaton {
             int upd = sa[p].nxt[c];
             if (sa[p].len + 1 < sa[prv].len) {
                 upd = (int)sa.size();
+
+
                 node nd = sa[prv];
                 nd.len = sa[p].len + 1;
                 sa.push_back(nd);
@@ -54,19 +58,21 @@ struct SuffixAutomaton {
         }
     }
 };
-SuffixAutomaton S;
+
 void solve() {
     string s;
     cin >> s;
+    SuffixAutomaton S;
     for (auto nxt : s) {
-        a = nxt - 'a';
-        S.addChar(a);
+        if (nxt == '?') {
+            cout << ans << '\n';
+        }
+        else {
+            S.addChar(nxt - 'a');
+            ll last = S.total;
+            ans += S.sa[last].len - S.sa[S.sa[last].slink].len;
+        }
     }
-    for (int i = 1; i < S.sa.size(); i++) {
-        auto now = S.sa[i];
-        ans += now.len - S.sa[now.slink].len;
-    }
-    cout << ans << endl;
 }
 
 int main() {
