@@ -25,3 +25,18 @@ void solve() {
 		cout << ncr(a, b) << '\n';
 	}
 }
+//오일러 파이 함수 
+ll getpi(ll x) {
+    ll ret = 1;
+    for (ll i = 2; i * i <= x; i++) {
+        if (x % i) continue;
+        ll cnt = 0;
+        while (!(x % i)) {
+            x /= i;
+            cnt++;
+        }
+        ret *= (pw(i, cnt, (ll)1e18) - pw(i, cnt - 1, (ll)1e18));
+    }
+    if (x != 1) ret *= (x - 1);
+    return ret;
+}
