@@ -27,7 +27,7 @@ ll getpi(ll x) {
     if (x != 1) ret *= (x - 1);
     return ret;
 }
-
+//적당히 tower 함수 변형해서 풀면 됩니ㅏ.
 ll tower(vector<ll>& arr, ll l, ll r, ll mod) {
     //[arr[l],~ ,arr[r]] %mod를 return
     ll len = r - l + 1;
