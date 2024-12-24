@@ -1,0 +1,60 @@
+//solution of 1792
+#include<bits/stdc++.h>
+#define all(v) v.begin(),v.end()
+using namespace std;
+using ll = long long;
+using P = pair<ll, ll>;
+using PP = pair<ll, P>;
+const ll n_ = 1e5 + 505, inf = (ll)2e9 * (ll)1e9 + 7, mod = 1e9 + 7;
+ll dy[4] = { -1,0,1,0 }, dx[4] = { 0,1,0,-1 };
+ll n, m, tc = 1, a, b, c, d, sum, x, y, z, base, ans;
+ll gcd(ll x, ll y) {
+	if (!y)return x;
+	return gcd(y, x % y);
+};
+ll mo[n_], pre[n_], A[n_], phi[n_];
+void init_mobius() {
+	fill(mo, mo + n_, 1);
+	mo[1] = 1;
+	for (ll i = 2; i * i < n_; i++) {
+		if (mo[i] != 1)continue;
+		for (ll j = i; j < n_; j += i)mo[j] *= -i;
+		for (ll j = i * i; j < n_; j += i * i)mo[j] = 0;
+	}
+	for (ll i = 2; i < n_; i++) {
+		if (mo[i] == i)mo[i] = 1;
+		else if (mo[i] == -i)mo[i] = -1;
+		else if (mo[i] < 0)mo[i] = 1;
+		else if (mo[i] > 0)mo[i] = -1;
+	}
+}
+void init_phi() {
+	for (int i = 1; i < n_; i++)phi[i] = i;
+	for (ll i = 2; i < n_; i++) {
+		if (A[i])continue;
+		for (ll j = i; j < n_; j += i)A[j] = 1, phi[j] = phi[j] * (i - 1) / i;
+	}
+}
+void solve() {
+	init_mobius();
+	cin >> n;
+	for (int i = 1; i < n_; i++)pre[i] = pre[i - 1] + mo[i];
+	for (int i = 1; i <= n; i++) {
+		cin >> a >> b >> d;
+		a /= d, b /= d;
+		ans = 0;
+		for (int j = 1; j <= min(a, b);j++) {
+			x = a / (a / j), y = b / (b / j);
+			z = min(x, y);
+			ans += (pre[z] - pre[j - 1]) * (a / j) * (b / j);
+			j = z;
+		}
+		cout << ans << '\n';
+	}
+}
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0), cout.tie(0);
+	//cin >> tc;
+	while (tc--)solve();
+}
