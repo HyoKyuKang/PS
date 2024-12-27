@@ -34,6 +34,7 @@ class aho {
         fin[now] = 1;
     }
     aho(vector<string> S) {
+        for (int i = 0; i < nmax; i++) fail[i] = fin[i] = last[i] = 0;
         for (auto nxt : S) add(nxt);
         queue<int> q;
         q.push(0);
