@@ -1,3 +1,11 @@
+#include<bits/stdc++.h>
+#define double long double
+using namespace std;
+double eps = -1e12;
+using ll = long long;
+
+
+//23270 AC
 vector<double> gauss_mod(vector<vector<double>>& a) {
 
 	int n = a.size();
@@ -35,4 +43,44 @@ vector<double> gauss_mod(vector<vector<double>>& a) {
 	for (int i = 0; i < m; ++i)
 		if (~w[i]) ans[i] = a[w[i]][m - 1];
 	return ans; // solution exist
+}
+ll n, k, x, a, b;
+double pr;
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0), cout.tie(0);
+	cin >> n >> k >> pr;
+	vector<vector<double>>now;
+	x = (1 << n);
+	for (int i = 0; i < (1 << n); i++) {
+		int cnt = 0;
+		vector<double>T;
+		for (int j = 0; j < n; j++) {
+			if (i&(1 << j))cnt++;
+		}
+		T.resize((1 << n) +1 );
+		if (cnt == k) {
+			T[i] = 1;
+		}
+		else {
+			a = i * 2 + 1;
+			b = i * 2;
+			if (a >= x)a -= x;
+			if (b >= x)b -= x;
+			if (i == 7)
+				i = i;
+			T[i] += 1;
+			T[a] -= pr;
+			T[b] -= 1.0 - pr;
+			T[(1 << n)] = -1;
+		}
+		now.push_back(T);
+	}
+
+
+	cout << fixed;
+	cout.precision(13);
+	cout << -gauss_mod(now)[0];
+	auto ret = gauss_mod(now);
+	//for (auto nxt : ret)cout << nxt << endl;
 }
