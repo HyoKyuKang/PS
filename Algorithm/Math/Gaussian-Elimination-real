@@ -1,0 +1,38 @@
+vector<double> gauss_mod(vector<vector<double>>& a) {
+
+	int n = a.size();
+	int m = a[0].size();
+	vector<int> w(m, -1); // i번째 열에 있는 pivot이 몇 번째 행에 있는지 저장
+	for (int c = 0, r = 0; c < m && r < n; ++c) {
+		int p = r; // pivot row
+		for (int i = r; i < n; ++i)
+			if (a[p][c] < a[i][c])
+				p = i;
+		if (abs(a[p][c] - 0) < eps) continue; // free variable
+
+		for (int j = 0; j < m; ++j)
+			swap(a[p][j], a[r][j]);
+		w[c] = r;
+
+		double t = a[r][c];
+		for (int j = 0; j < m; ++j)
+			a[r][j] = a[r][j] / t;
+
+		for (int i = 0; i < n; ++i) if (i != r) {
+			double t = a[i][c];
+			for (int j = c; j < m; ++j)
+				a[i][j] = a[i][j] - a[r][j] * t;
+		}
+		++r;
+	}
+
+	// existence of solution
+	for (int i = 0; i < n; ++i)
+		if (count(a[i].begin(), --a[i].end(), 0) == m - 1 && a[i][m - 1])
+			return vector<double>(); // no solution
+
+	vector<double> ans(m);
+	for (int i = 0; i < m; ++i)
+		if (~w[i]) ans[i] = a[w[i]][m - 1];
+	return ans; // solution exist
+}
