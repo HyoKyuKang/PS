@@ -5,6 +5,7 @@
 //기본을 long double로 가고, 시간 터지면 double로 하자...
 
 #define double long double 
+#define sz(v) ((int)(v).size())
 typedef complex<double> base;
 
 void fft(vector <base>& a, bool invert)
