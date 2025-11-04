@@ -1,0 +1,138 @@
+#include <bits/stdc++.h>
+#define all(v) v.begin(), v.end()
+using namespace std;
+using ll = long long;
+
+const ll MOD = 998244353;
+
+ll pw(ll a, ll b, ll mod) {
+    ll ret = 1 % mod;
+    a %= mod;
+    while (b) {
+        if (b & 1) ret = ret * a % mod;
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return ret;
+}
+
+template <ll mod, ll w>
+
+class NTT{
+public:
+    void ntt(vector<ll> &f, bool inv = 0){
+        int n = f.size(), j = 0;
+        vector<ll> root(n >> 1);
+        for(int i=1; i<n; i++){
+            int bit = (n >> 1);
+            while(j >= bit){
+                j -= bit; bit >>= 1;
+            }
+            j += bit;
+            if(i < j) swap(f[i], f[j]);
+        }
+        ll ang = pw(w, (mod - 1) / n, mod); if(inv) ang = pw(ang, mod - 2, mod);
+        root[0] = 1; for(int i=1; i<(n >> 1); i++) root[i] = root[i-1] * ang % mod;
+        for(int i=2; i<=n; i<<=1){
+            int step = n / i;
+            for(int j=0; j<n; j+=i){
+                for(int k=0; k<(i >> 1); k++){
+                    ll u = f[j | k], v = f[j | k | i >> 1] * root[step * k] % mod;
+                    f[j | k] = (u + v) % mod;
+                    f[j | k | i >> 1] = (u - v) % mod;
+                    if(f[j | k | i >> 1] < 0) f[j | k | i >> 1] += mod;
+                }
+            }
+        }
+        ll t = pw(n, mod - 2, mod);
+        if(inv) for(int i=0; i<n; i++) f[i] = f[i] * t % mod;
+    }
+    vector<ll> multiply(vector<ll> &_a, vector<ll> &_b){
+        vector<ll> a(all(_a)), b(all(_b));
+        int n = 2;
+        while(n < a.size() + b.size()) n <<= 1;
+        a.resize(n); b.resize(n);
+        ntt(a); ntt(b);
+        for(int i=0; i<n; i++) a[i] = a[i] * b[i] % mod;
+        ntt(a, 1);
+        return a;
+    }
+};
+
+int n;
+vector<ll> A,F,G;
+ll Psum = 0;     // prefix sum of G: Psum = sum_{k=0}^l G[k]
+
+NTT<MOD, 3> ntt;
+
+// CDQ on [l, r)
+void DnC(int l, int r) {
+    if (l + 1 == r) {
+        ll add = F[l] * F[0] % MOD;
+        if (l) add = (add + F[0] * F[l]) % MOD;
+        G[l] = (G[l] + add) % MOD;
+        Psum = (Psum + G[l]) % MOD;
+        F[l + 1] = A[l + 1] * Psum % MOD;
+        return;
+    }
+
+    int m = (l + r) >> 1;
+
+    DnC(l, m);
+    {
+        int fLen = m - l;
+        int gLen = min(m, r - l);
+            vector<ll> f(fLen), g(gLen);
+            for (int i = 0; i < fLen; i++) f[i] = F[l + i];
+            for (int i = 0; i < gLen; i++) g[i] = F[i];
+            vector<ll> h = ntt.multiply(f, g);
+            int startT = m - l;
+            int endT = r - l - 1;
+            startT = max(startT, 0);
+            endT = min(endT, (int)h.size() - 1);
+            for (int t = startT; t <= endT; t++) {
+                int k = l + t;
+                G[k] = (G[k] + h[t]) % MOD;
+            }
+    }
+    {
+        int fLen = m - l;
+        int gLen = min(l, r - l);
+            vector<ll> f(fLen), g(gLen);
+            for (int i = 0; i < fLen; i++) f[i] = F[l + i];
+            for (int i = 0; i < gLen; i++) g[i] = F[i];
+            vector<ll> h = ntt.multiply(f, g);
+            int startT = m - l;
+            int endT = r - l - 1;
+            startT = max(startT, 0);
+            endT = min(endT, (int)h.size() - 1);
+            for (int t = startT; t <= endT; t++) {
+                int k = l + t;
+                G[k] = (G[k] + h[t]) % MOD;
+            }
+    }
+    DnC(m, r);
+}
+
+void solve() {
+    cin >> n;
+    A.assign(n + 1, 0);
+    for (int i = 1; i <= n; i++) cin >> A[i];
+
+    F.assign(n + 1, 0);
+    G.assign(n + 1, 0);
+    F[0] = 1;
+    Psum = 0;
+
+    DnC(0, n);
+
+    for (int i = 1; i <= n; i++)cout<<F[i]<<' ';
+
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    solve();
+    return 0;
+}
