@@ -2,9 +2,11 @@
 #define all(v) v.begin(), v.end()
 using namespace std;
 using ll = long long;
-const ll nmax = 202020;
+const ll nmax = 202020
+//13263 나무키우기 코드
 
-class CHT {
+class CHT {;
+//최솟값 CHT
 private:
     using P = pair<ll, ll>;
 
