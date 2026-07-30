@@ -1,0 +1,6 @@
+for (long long l = 1, r; l <= N; l = r + 1) {
+    long long q = N / l;
+    r = N / q;
+
+    // i ∈ [l, r]에서는 N / i == q
+}
