@@ -164,3 +164,179 @@ pd get_circle_center(pd a,pd b,pd c){
     auto y = a.y + (c2 * aa.x - c1 * bb.x) / d;
     return pd(x, y);
 }
+
+/*
+    Additional Geometry Algorithms
+
+    필요한 기존 함수 및 연산:
+    - ccw(a, b, c)
+    - intersect(a, b, c, d)
+    - pt operator-(pt)
+    - a / b : cross product
+    - p.sz() : x^2 + y^2
+*/
+
+
+/*------------------------------------------------------------*
+ | 1. Point in General Simple Polygon
+ *------------------------------------------------------------*/
+
+// 일반 simple polygon에서 점 p의 위치를 O(n)에 판정
+//
+// 조건:
+// - polygon은 self-intersecting하지 않는 simple polygon
+// - 꼭짓점 순서는 CW, CCW 어느 쪽이어도 가능
+// - v[0]을 맨 뒤에 다시 넣지 않은 상태
+//
+// return:
+// 0 = outside
+// 1 = inside
+// 2 = boundary
+//
+// ray casting:
+// p에서 오른쪽으로 반직선을 쏘았을 때
+// polygon의 변과 교차하는 횟수의 홀짝을 확인한다.
+//
+// 꼭짓점을 두 번 세지 않기 위해
+// a.y <= p.y < b.y와 같은 half-open interval을 사용한다.
+int inside_polygon(pt p, vector<pt>& v){
+    int n = v.size();
+    bool in = 0;
+
+    for(int i = 0; i < n; i++){
+        pt a = v[i];
+        pt b = v[(i + 1) % n];
+
+        // 선분 ab와 점 p가 교차한다
+        // <=> p가 polygon의 변 또는 꼭짓점 위에 있다.
+        if(intersect(a, b, p, p))
+            return 2;
+
+        // 아래에서 위로 올라가는 변과 오른쪽 ray가 교차
+        if(a.y <= p.y && p.y < b.y && ccw(a, b, p) > 0)
+            in ^= 1;
+
+        // 위에서 아래로 내려가는 변과 오른쪽 ray가 교차
+        if(b.y <= p.y && p.y < a.y && ccw(a, b, p) < 0)
+            in ^= 1;
+    }
+
+    return in ? 1 : 0;
+}
+
+
+/*------------------------------------------------------------*
+ | 2. Polar Angle Sort
+ *------------------------------------------------------------*/
+
+// 벡터를 polar angle 기준으로 두 반평면으로 나눈다.
+//
+// true:
+// 양의 x축을 포함하는 위쪽 반평면
+//
+// false:
+// 음의 x축을 포함하는 아래쪽 반평면
+bool upper(pt p){
+    return p.y > 0 || (p.y == 0 && p.x >= 0);
+}
+
+// 원점 기준 polar angle comparator
+//
+// 정렬 순서:
+// 양의 x축부터 시작하여 반시계 방향
+//
+// 같은 방향의 벡터는 길이가 짧은 것이 먼저 온다.
+//
+// 주의:
+// - 영벡터 (0, 0)는 방향이 없으므로 가급적 넣지 않는다.
+// - 기준점 o를 중심으로 정렬하려면
+//   cmp_angle(a - o, b - o)로 비교한다.
+bool cmp_angle(pt a, pt b){
+    bool ua = upper(a);
+    bool ub = upper(b);
+
+    if(ua != ub)
+        return ua > ub;
+
+    ll cr = a / b;
+
+    if(cr != 0)
+        return cr > 0;
+
+    return a.sz() < b.sz();
+}
+
+/*
+사용 예시 1: 원점 기준
+
+sort(v.begin(), v.end(), cmp_angle);
+
+
+사용 예시 2: 점 o 기준
+
+sort(v.begin(), v.end(), [&](pt a, pt b){
+    return cmp_angle(a - o, b - o);
+});
+*/
+
+
+/*------------------------------------------------------------*
+ | 3. Rotating Calipers: Convex Polygon Diameter
+ *------------------------------------------------------------*/
+
+// convex polygon에서 가장 먼 두 점 사이 거리의 제곱
+//
+// 조건:
+// - h는 convex polygon
+// - 꼭짓점은 CCW 순서
+// - h[0]을 맨 뒤에 다시 넣지 않은 상태
+//
+// 시간복잡도: O(n)
+//
+// return:
+// max |h[i] - h[j]|^2
+ll diameter2(vector<pt>& h){
+    int n = h.size();
+
+    if(n <= 1)
+        return 0;
+
+    if(n == 2)
+        return (h[0] - h[1]).sz();
+
+    ll ret = 0;
+    int j = 1;
+
+    // directed edge h[i] -> h[ni]와 점 h[k]가 만드는
+    // 평행사변형 넓이의 절댓값
+    auto area2 = [&](int i, int ni, int k){
+        return abs((h[ni] - h[i]) / (h[k] - h[i]));
+    };
+
+    for(int i = 0; i < n; i++){
+        int ni = (i + 1) % n;
+
+        // 현재 edge (i, ni)에서 가장 먼 반대편 점까지 j를 이동
+        //
+        // convexity에 의해 다음 edge로 넘어가도
+        // 최적의 j는 뒤로 돌아가지 않으므로 전체 O(n)
+        while(area2(i, ni, (j + 1) % n)
+            > area2(i, ni, j)){
+            j = (j + 1) % n;
+        }
+
+        ret = max(ret, (h[i] - h[j]).sz());
+        ret = max(ret, (h[ni] - h[j]).sz());
+    }
+
+    return ret;
+}
+
+/*
+사용 예시:
+
+vector<pt> h = hull(v);
+
+ll d2 = diameter2(h);          // 최대 거리의 제곱
+double d = sqrt((double)d2);    // 실제 최대 거리
+*/
