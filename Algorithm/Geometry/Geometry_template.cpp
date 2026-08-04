@@ -140,6 +140,7 @@ int inside(pt p, vector<pt>& v){
 }
 
 // 볼록 다각형 내부의 점 판별 O(logn)
+// p가 다각형의 변이나 꼭짓점 위에 있지 않다고 가정
 int inside(pt p, vector<pt>& v){
     int n = v.size();
     if(n < 3 || ccw(v[0], v[1], p) < 0 || ccw(v[0], v[n - 1], p) > 0) return 0;
