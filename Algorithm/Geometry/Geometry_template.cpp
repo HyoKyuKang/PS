@@ -251,6 +251,15 @@ bool upper(pt p){
 // - 영벡터 (0, 0)는 방향이 없으므로 가급적 넣지 않는다.
 // - 기준점 o를 중심으로 정렬하려면
 //   cmp_angle(a - o, b - o)로 비교한다.
+/*
+o 기준 정렬 *** v[0]-v[0]은 정의 안되서 v[1] 부터 정렬 해야 함 ***
+pt o = v[0];
+
+sort(v.begin() + 1, v.end(), [&](pt a, pt b){
+    return cmp_angle(a - o, b - o);
+});
+*/
+
 bool cmp_angle(pt a, pt b){
     bool ua = upper(a);
     bool ub = upper(b);
