@@ -225,56 +225,6 @@ int inside_polygon(pt p, vector<pt>& v){
 }
 
 
-/*------------------------------------------------------------*
- | 2. Polar Angle Sort
- *------------------------------------------------------------*/
-
-// 벡터를 polar angle 기준으로 두 반평면으로 나눈다.
-//
-// true:
-// 양의 x축을 포함하는 위쪽 반평면
-//
-// false:
-// 음의 x축을 포함하는 아래쪽 반평면
-bool upper(pt p){
-    return p.y > 0 || (p.y == 0 && p.x >= 0);
-}
-
-// 원점 기준 polar angle comparator
-//
-// 정렬 순서:
-// 양의 x축부터 시작하여 반시계 방향
-//
-// 같은 방향의 벡터는 길이가 짧은 것이 먼저 온다.
-//
-// 주의:
-// - 영벡터 (0, 0)는 방향이 없으므로 가급적 넣지 않는다.
-// - 기준점 o를 중심으로 정렬하려면
-//   cmp_angle(a - o, b - o)로 비교한다.
-/*
-o 기준 정렬 *** v[0]-v[0]은 정의 안되서 v[1] 부터 정렬 해야 함 ***
-pt o = v[0];
-
-sort(v.begin() + 1, v.end(), [&](pt a, pt b){
-    return cmp_angle(a - o, b - o);
-});
-*/
-
-bool cmp_angle(pt a, pt b){
-    bool ua = upper(a);
-    bool ub = upper(b);
-
-    if(ua != ub)
-        return ua > ub;
-
-    ll cr = a / b;
-
-    if(cr != 0)
-        return cr > 0;
-
-    return a.sz() < b.sz();
-}
-
 /*
 사용 예시 1: 원점 기준
 
