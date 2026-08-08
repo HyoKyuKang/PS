@@ -14,24 +14,30 @@ struct pt{
 };
 
 // 실수 좌표 점
-struct pd{
+struct pd {
     double x, y;
-    pd(){};
+    pd() {};
     pd(double x, double y) : x(x), y(y) {};
-    //pd(pt t) : x(t.x), y(t.y) {};
-    
-    pd operator +(pd t){return {x + t.x, y + t.y};}
-    pd operator -(pd t){return {x - t.x, y - t.y};}
-    double operator * (pd t){return x * t.x + y * t.y;}
-    double operator / (pd t){return x * t.y - y * t.x;}
-    // *등호 사용시 주의
-    //bool operator == (const pd t)const{return x == t.x && y == t.y;}
-    //bool operator <(const pd t)const{return x == t.x ? y < t.y : x < t.x;}
-    //
-	pd operator*(double k) { return {x * k, y * k}; }
-    pd operator/(double k) { return {x / k, y / k}; }
+    // pd(pt t) : x(t.x), y(t.y) {};
 
-    double sz(){return x * x + y * y;}
+    pd operator+(pd t) { return {x + t.x, y + t.y}; }
+    pd operator-(pd t) { return {x - t.x, y - t.y}; }
+    double operator*(pd t) { return x * t.x + y * t.y; }
+    double operator/(pd t) { return x * t.y - y * t.x; }
+    // *등호 사용시 주의
+    // bool operator == (const pd t)const{return x == t.x && y == t.y;}
+    // bool operator <(const pd t)const{return x == t.x ? y < t.y : x < t.x;}
+    //
+
+    pd operator*(double k) { return {x * k, y * k}; }
+    pd operator/(double k) { return {x / k, y / k}; }
+    
+    double sz() { return x * x + y * y; }
+    double len() { return sqrt(sz()); }
+    
+    pd unit() {
+        return *this / len();
+    }
 };
 
 int ccw(pt a, pt b, pt c){
