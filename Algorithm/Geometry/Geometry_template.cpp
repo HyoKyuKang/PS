@@ -28,6 +28,9 @@ struct pd{
     //bool operator == (const pd t)const{return x == t.x && y == t.y;}
     //bool operator <(const pd t)const{return x == t.x ? y < t.y : x < t.x;}
     //
+	pd operator*(double k) { return {x * k, y * k}; }
+    pd operator/(double k) { return {x / k, y / k}; }
+
     double sz(){return x * x + y * y;}
 };
 
